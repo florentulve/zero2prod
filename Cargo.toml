@@ -13,18 +13,19 @@ axum = "0.7.5"
 clap = { version = "4.5.16", features = ["derive"] }
 console-subscriber = "0.1.5"
 opentelemetry = "0.24"
-opentelemetry_sdk = { version = "0.24" }
+opentelemetry_sdk = { version = "0.24", features = ["rt-tokio"] }
 opentelemetry-stdout = { version = "0.5.0" }
 opentelemetry-appender-log = { version = "0.5.0", features = ["logs_level_enabled", "with-serde"]}
 opentelemetry-semantic-conventions = "0.16.0"
+opentelemetry-otlp = "0.17.0"
 serde = { version = "1.0.209", features = ["derive"] }
 tokio = { version = "1", features = ["full"] }
 tracing = "0.1.40"
-tracing-subscriber = { version = "0.3.0", features = ["env-filter"] }
+tracing-subscriber = { version = "0.3.0", features = ["env-filter", "json"] }
 tracing-opentelemetry = "0.25.0"
-tower-http = { version = "0.5.2", features = ["trace"] }
+tower-http = { version = "0.5.2", features = ["trace", "sensitive-headers", "compression-br", "compression-gzip", "propagate-header"] }
 tower = "0.5.0"
-opentelemetry-otlp = "0.17.0"
+tracing-core = "0.1.32"
 
 [dev-dependencies]
 reqwest = "0.11"

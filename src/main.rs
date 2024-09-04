@@ -1,11 +1,22 @@
 #![warn(clippy::all)]
 use clap::Parser;
+use opentelemetry::trace::{Tracer, TracerProvider as _};
+use opentelemetry_sdk::trace::TracerProvider;
 use std::net::Ipv4Addr;
 use std::{error::Error, future};
-use tracing::{debug, error, span, warn};
+use tracing::instrument::WithSubscriber;
+use tracing::{debug, error, event, span, trace, warn};
 use tracing::{info, subscriber, Level};
-use tracing_subscriber::EnvFilter;
+use tracing_opentelemetry::OpenTelemetryLayer;
+use tracing_subscriber::fmt::format::FmtSpan;
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::prelude::*;
+use tracing_subscriber::prelude::*;
+use tracing_subscriber::util::SubscriberInitExt;
+use tracing_subscriber::Registry;
+use tracing_subscriber::{fmt, EnvFilter};
 use zero2prod::app::application::Application;
+use zero2prod::otel;
 use zero2prod::webapp::server::Webapp;
 
 mod app;
@@ -35,20 +46,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     if std::env::var("RUST_LOG").is_err() {
         std::env::set_var("RUST_LOG", "info");
     }
-
-    let subscriber = tracing_subscriber::fmt()
-        .compact()
-        .with_env_filter(EnvFilter::from_default_env())
-        .with_timer(tracing_subscriber::fmt::time::uptime())
-        .with_span_events(tracing_subscriber::fmt::format::FmtSpan::ACTIVE)
-        .with_level(true)
-        .with_file(true)
-        .with_line_number(true)
-        .with_thread_ids(true)
-        .with_target(true)
-        .finish();
-
-    tracing::subscriber::set_global_default(subscriber)?;
+    let _guard = otel::init_tracing_subscriber();
 
     error!("Running in CLI mode");
     warn!("Running in CLI mode");
@@ -56,6 +54,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     info!("Running in CLI mode");
     info!("server: {}", args.server);
 
+    let span = span!(Level::INFO, "my span");
+    span.record("key", "value");
+    let _enter = span.enter();
+    event!(Level::INFO, "something has happened!");
+    {
+        _ = span!(Level::INFO, "another span").enter();
+        event!(Level::INFO, "something has happened!");
+    }
     if args.server {
         Webapp::new(&app).web().await?;
     }
