@@ -26,6 +26,7 @@ tracing-opentelemetry = "0.25.0"
 tower-http = { version = "0.5.2", features = ["trace", "sensitive-headers", "compression-br", "compression-gzip", "propagate-header"] }
 tower = "0.5.0"
 tracing-core = "0.1.32"
+nanoid = "0.4.0"
 
 [dev-dependencies]
 reqwest = "0.11"

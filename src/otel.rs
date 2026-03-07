@@ -85,6 +85,13 @@ fn init_tracer() -> Tracer {
     provider.tracer("tracing-otel-subscriber")
 }
 
+fn init_metrics() {
+    // get a meter from a provider
+    let meter = global::meter("my_service");
+    let counter = meter.u64_counter("my_counter").init();
+    counter.add(1, &[KeyValue::new("http.client_ip", "83.164.160.102")]);
+}
+
 // Initialize tracing-subscriber and return OtelGuard for opentelemetry-related termination processing
 pub fn init_tracing_subscriber() -> OtelGuard {
     let meter_provider = init_meter_provider();
@@ -94,11 +101,12 @@ pub fn init_tracing_subscriber() -> OtelGuard {
         .with_ansi(true)
         .with_timer(tracing_subscriber::fmt::time::SystemTime)
         .with_level(true)
-        .with_span_events(FmtSpan::NEW)
+        //.with_span_events(FmtSpan::ACTIVE)
         .with_file(true)
-        .with_line_number(true)
-        .with_thread_ids(true)
-        .with_target(true);
+        .with_line_number(true);
+    //.with_line_number(true)
+    //.with_thread_ids(true)
+    //.with_target(true);
 
     let filter_layer = EnvFilter::try_from_default_env()
         .or_else(|_| EnvFilter::try_new("info"))
@@ -116,6 +124,8 @@ pub fn init_tracing_subscriber() -> OtelGuard {
         .with(MetricsLayer::new(meter_provider.clone()))
         .with(OpenTelemetryLayer::new(tracer))
         .init();
+
+    init_metrics();
 
     OtelGuard { meter_provider }
 }
