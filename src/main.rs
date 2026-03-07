@@ -44,7 +44,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let app = Application::default().ip(ip).port(args.port);
 
     if std::env::var("RUST_LOG").is_err() {
-        std::env::set_var("RUST_LOG", "info");
+        // TODO: Audit that the environment access only happens in single-threaded code.
+        unsafe { std::env::set_var("RUST_LOG", "info") };
     }
     let _guard = otel::init_tracing_subscriber();
 
