@@ -1,34 +1,35 @@
 [package]
 name = "zero2prod"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 license = "MIT"
 
 [lib]
 path = "src/lib.rs"
 
 [dependencies]
-anyhow = "1.0"
-axum = "0.7.5"
-clap = { version = "4.5.16", features = ["derive"] }
-console-subscriber = "0.1.5"
-opentelemetry = "0.24"
-opentelemetry_sdk = { version = "0.24", features = ["rt-tokio"] }
-opentelemetry-stdout = { version = "0.5.0" }
-opentelemetry-appender-log = { version = "0.5.0", features = ["logs_level_enabled", "with-serde"]}
-opentelemetry-semantic-conventions = "0.16.0"
-opentelemetry-otlp = "0.17.0"
-serde = { version = "1.0.209", features = ["derive"] }
+eyre = "0.6.12"
+axum = "0.8.8"
+clap = { version = "4", features = ["derive"] }
+console-subscriber = "0.5.0"
+opentelemetry = "0.31"
+opentelemetry_sdk = { version = "0.31", features = ["rt-tokio"] }
+opentelemetry-stdout = { version = "0.31.0", features = ["metrics"] }
+opentelemetry-appender-log = { version = "0.31.0", features = ["spec_unstable_logs_enabled", "with-serde"]}
+opentelemetry-semantic-conventions = { version = "0.31.0", features = ["semconv_experimental"] }
+opentelemetry-otlp = { version = "0.31.0", features = ["grpc-tonic", "metrics", "trace", "logs"] }
+serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["full"] }
-tracing = "0.1.40"
-tracing-subscriber = { version = "0.3.0", features = ["env-filter", "json"] }
-tracing-opentelemetry = "0.25.0"
-tower-http = { version = "0.5.2", features = ["trace", "sensitive-headers", "compression-br", "compression-gzip", "propagate-header"] }
-tower = "0.5.0"
-tracing-core = "0.1.32"
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.22", features = ["env-filter", "json"] }
+tracing-opentelemetry = "0.32.1"
+tower-http = { version = "0.6.8", features = ["trace", "sensitive-headers", "compression-zstd", "compression-br", "compression-gzip", "propagate-header"] }
+tower = "0.5.3"
+tracing-core = "0.1.36"
 nanoid = "0.4.0"
+dotenvy = { version = "0.15.7", features = ["clap"] }
 
 [dev-dependencies]
-reqwest = "0.11"
-anyhow = "1.0"
+reqwest = "0.13"
+eyre = "0.6.12"
 thiserror = "1.0"
